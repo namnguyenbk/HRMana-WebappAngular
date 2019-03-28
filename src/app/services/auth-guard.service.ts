@@ -10,11 +10,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment';
 
 let server: string;
-if (environment.production == false) {
-  server = "http://localhost:9090/";
-} else {
-  server = "https://todomana.herokuapp.com";
-}
+  server = "https://tdmnserver.herokuapp.com/";
 
 const loginApi: string = server + "oauth/token";
 const registrationApi: string = server + "register";

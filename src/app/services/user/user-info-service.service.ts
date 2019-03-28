@@ -2,8 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { UserInfo } from '../../interface/user-interface'
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-const userInfoApi : string = "http://localhost:9090/getUserDetailInfo"
+
+let server: string;
+server = "https://tdmnserver.herokuapp.com/";
+const userInfoApi : string = server + "getUserDetailInfo";
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +26,9 @@ export class UserInfoServiceService {
       })
     };
 
-    const getStatusApi: string = "http://localhost:9090/getUserDetailInfo";
+    // const getStatusApi: string = "http://localhost:9090/getUserDetailInfo";
     let res : UserInfo;
-    return this.http.post(getStatusApi, JSON.stringify({ "username": localStorage.getItem('username') }), httpOptions);
+    return this.http.post(userInfoApi, JSON.stringify({ "username": localStorage.getItem('username') }), httpOptions);
   } 
 
   parseJwt(token) {
