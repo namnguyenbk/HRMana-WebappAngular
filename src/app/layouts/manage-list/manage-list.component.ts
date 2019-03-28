@@ -18,7 +18,7 @@ import { UserInfo } from '../../interface/user-interface';
   ]
 })
 export class ManageListComponent implements OnInit {
-  private userInfo : UserInfo;
+  userInfo : UserInfo;
   isAdmin : boolean = false;
   constructor(public media: TdMediaService, 
     private authService : AuthGuardService,
