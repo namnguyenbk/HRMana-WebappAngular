@@ -7,13 +7,20 @@ import { HttpHeaders } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 
 import { CookieService } from 'ngx-cookie-service';
-import { error } from 'util';
+import { environment } from '../../environments/environment';
 
-let currentTokenData: jwtData;
-const loginApi: string = "http://localhost:9090/oauth/token";
-const registrationApi: string = "http://localhost:9090/register";
-const getStatusApi: string = "http://localhost:9090/getStatusUser";
-const verifyApi: string = "http://localhost:9090/verify?verify_code=";
+let server: string;
+if (environment.production == false) {
+  server = "http://localhost:9090/";
+} else {
+  server = "https://todomana.herokuapp.com";
+}
+
+const loginApi: string = server + "oauth/token";
+const registrationApi: string = server + "register";
+const getStatusApi: string = server + "getStatusUser";
+const verifyApi: string = server + "verify?verify_code=";
+
 
 const httpOptionsAuth = {
   headers: new HttpHeaders({
@@ -44,8 +51,8 @@ export interface jwtData {
 }
 
 export interface commonRes {
-  code : string;
-  data : string;
+  code: string;
+  data: string;
 }
 
 @Injectable()
@@ -100,12 +107,12 @@ export class AuthGuardService {
     const userLoginDataEncodedUrl = Object.keys(user).filter(k => user.hasOwnProperty(k)).map(
       k => encodeURIComponent(k) + '=' + encodeURIComponent(user[k])).join('&');
     this.http.post<jwtData>(loginApi, userLoginDataEncodedUrl, httpOptionsAuth).subscribe(tokenData => {
-      if(!tokenData){
+      if (!tokenData) {
         this.openAlert('Tài khoản và mật khẩu không chính xác!');
-      }else{
+      } else {
         this.cookieTokenData(tokenData, usernameLg);
       }
-    }, error =>{
+    }, error => {
       this.openAlert('Không thể đăng nhập!');
     });
 
@@ -121,7 +128,6 @@ export class AuthGuardService {
   }
 
   cookieTokenData(tokenData: jwtData, username: string) {
-    currentTokenData = tokenData;
     localStorage.clear();
     localStorage.setItem('username', username);
     localStorage.setItem('access_token', tokenData.access_token);
@@ -190,12 +196,12 @@ export class AuthGuardService {
             'Authorization': 'Bearer' + localStorage.getItem('access_token'),
           })
         };
-        
-        this.http.get(verifyApi + value.toString(), httpOptions ).subscribe( (res : commonRes) =>{
-          if(res.code == '1000'){
+
+        this.http.get(verifyApi + value.toString(), httpOptions).subscribe((res: commonRes) => {
+          if (res.code == '1000') {
             this.openAlert('Đăng kí thành công!');
             this.router.navigate(['']);
-          }else{
+          } else {
             this.openAlert('Không thể xác thực!');
           }
         });
