@@ -8,8 +8,10 @@ import { CovalentHttpModule } from '@covalent/http';
 import { CovalentDynamicFormsModule } from '@covalent/dynamic-forms';
 import { CovalentSearchModule } from '@covalent/core/search';
 import { CovalentDialogsModule } from '@covalent/core/dialogs';
+import { CovalentLoadingModule } from '@covalent/core/loading';
 
 import { TdDialogService } from '@covalent/core/dialogs';
+import { TdLoadingService } from '@covalent/core/loading';
 
 import {
 
@@ -20,6 +22,7 @@ import {
     MatSelectModule, MatSlideToggleModule, MatDatepickerModule, MatNativeDateModule,MatRadioModule
 
 } from '@angular/material';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -45,6 +48,7 @@ import {
         CovalentDynamicFormsModule,
         CovalentSearchModule,
         CovalentDialogsModule,
+        CovalentLoadingModule,
         RouterModule
     ],
     exports: [
@@ -71,9 +75,11 @@ import {
         RouterModule,
         CovalentDialogsModule,
         CovalentSearchModule,
+        CovalentLoadingModule,
     ],
     providers:[
         TdDialogService,
+        TdLoadingService
     ]
 })
 export class CommonModuleUi { }

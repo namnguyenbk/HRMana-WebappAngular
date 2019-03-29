@@ -4,6 +4,7 @@ import {Routes, RouterModule} from '@angular/router';
 import {LoginComponent} from './user/login/login.component';
 import {ManageListComponent} from './layouts/manage-list/manage-list.component';
 import {AuthGuardService} from './services/auth-guard.service';
+
 const ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '', component: ManageListComponent, canActivate: [AuthGuardService] },

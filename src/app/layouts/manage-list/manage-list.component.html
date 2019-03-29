@@ -1,6 +1,6 @@
-<td-layout>
-  <td-navigation-drawer *ngIf="userInfo" flex sidenavTitle="Tài khoản" logo="menu" name="{{userInfo.lname}} {{userInfo.fname}}" 
-    email="{{userInfo.email}}">
+<td-layout >
+  <td-navigation-drawer  *ngIf="userInfo" flex sidenavTitle="Tài khoản" logo="menu" name="{{userInfo.lname}} {{userInfo.fname}}" 
+    email="{{userInfo.email}}" >
     <mat-nav-list>
       <a mat-list-item>
         <mat-icon>home</mat-icon>Trang chủ
@@ -22,7 +22,7 @@
       </mat-nav-list>
     </div>
   </td-navigation-drawer>
-  <td-layout-nav-list #navList [opened]="media.registerQuery('gt-sm') | async"
+  <td-layout-nav-list #navList [opened]="media.registerQuery('gt-sm') | async" color="warn"
     [mode]="(media.registerQuery('gt-sm') | async) ? 'side' : 'over'"
     [sidenavWidth]="(media.registerQuery('gt-xs') | async) ? '250px' : '100%'">
     <div td-sidenav-toolbar-content layout="row" layout-align="start center">

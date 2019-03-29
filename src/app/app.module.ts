@@ -11,13 +11,11 @@ import { UserModule} from './user/user.module';
 
 import { UserInfoServiceService} from './services/user/user-info-service.service';
 import { CookieService } from 'ngx-cookie-service';
-import { DialogComponent } from './components/common/dialog/dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
     SidebarComponent,
     ManageListComponent,
-    DialogComponent,
   ],
   imports: [
     BrowserModule,
