@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot }
   from '@angular/router';
-import { TdDialogService } from '@covalent/core/dialogs';
+
+  import { DialogServiceService } from './common/dialog-service.service'
+  import { LoadingEffectService } from './common/loading-effect.service'
 
 import { HttpHeaders } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
@@ -10,7 +12,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment';
 
 let server: string;
-  server = "https://tdmnserver.herokuapp.com/";
+  server = environment.server;
+
 
 const loginApi: string = server + "oauth/token";
 const registrationApi: string = server + "register";
@@ -54,8 +57,11 @@ export interface commonRes {
 @Injectable()
 export class AuthGuardService {
 
-  constructor(private router: Router, private http: HttpClient, private cookieService: CookieService,
-    private dialogService: TdDialogService) {
+  constructor(
+    private router: Router, 
+    private http: HttpClient,
+    private dialogService: DialogServiceService,
+    private loadingService: LoadingEffectService) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
@@ -102,25 +108,51 @@ export class AuthGuardService {
     };
     const userLoginDataEncodedUrl = Object.keys(user).filter(k => user.hasOwnProperty(k)).map(
       k => encodeURIComponent(k) + '=' + encodeURIComponent(user[k])).join('&');
+    this.loadingService.showLoading();
     this.http.post<jwtData>(loginApi, userLoginDataEncodedUrl, httpOptionsAuth).subscribe(tokenData => {
+      this.loadingService.stopLoading();
       if (!tokenData) {
-        this.openAlert('Tài khoản và mật khẩu không chính xác!');
+        this.dialogService.openAlert('Tài khoản và mật khẩu không chính xác!');
       } else {
         this.cookieTokenData(tokenData, usernameLg);
       }
     }, error => {
-      this.openAlert('Không thể đăng nhập!');
+      this.loadingService.stopLoading();
+      this.dialogService.openAlert('Không thể đăng nhập!');
     });
-
+    this.loadingService.showLoading();
     this.http.post(getStatusApi, JSON.stringify({ "username": user.username }), httpOptions)
       .subscribe((res: any) => {
+        this.loadingService.stopLoading();
         if (res.status == 'VERIFY') {
           this.router.navigate(['']);
         } else {
           localStorage.clear();
-          this.openPromptVerify('Mã xác nhận đã được gửi vào email của bạn. Nhập mã xác nhận vào đây!')
+          this.dialogService.openPrompt('Xác thưc tài khoản','Mã xác nhận đã được gửi vào email của bạn. Nhập mã xác nhận vào đây!')
+          .afterClosed().subscribe((value: string) => {
+            if (value) {
+              let httpOptions = {
+                headers: new HttpHeaders({
+                  'Authorization': 'Bearer' + localStorage.getItem('access_token'),
+                })
+              };
+              this.loadingService.showLoading();
+              this.http.get(verifyApi + value.toString(), httpOptions).subscribe((res: commonRes) => {
+                this.loadingService.stopLoading();
+                if (res.code == '1000') {
+                  this.dialogService.openAlert('Đăng kí thành công!');
+                  this.router.navigate(['']);
+                } else {
+                  this.dialogService.openAlert('Không thể xác thực!');
+                }
+              });
+            } else {
+              this.dialogService.openAlert('Không thể xác thực!');
+            }
+          });
         }
       });
+      this.loadingService.stopLoading();
   }
 
   cookieTokenData(tokenData: jwtData, username: string) {
@@ -143,68 +175,26 @@ export class AuthGuardService {
       'email': email,
       'firstname': fname,
       'lastname': lname,
-
     }
-
+    this.loadingService.showLoading();
     this.http.post<any>(registrationApi, JSON.stringify(dataRegister), httpOptions)
       .subscribe(res => {
+        this.loadingService.stopLoading();
+        localStorage.clear();
         if (res.code == "1002") {
-          this.openAlert('Email đã tồn tại! Vui lòng sử dụng email khác.');
+          this.dialogService.openAlert('Email đã tồn tại! Vui lòng sử dụng email khác.');
         }
         if (res.code == "1000") {
-          localStorage.clear();
-          this.openAlert('Kiểm tra mã mã xác nhận đươc gửi trong mail của bạn!');
+          this.dialogService.openPrompt('Xác thực','Kiểm tra mã mã xác nhận đươc gửi trong mail của bạn!');
           this.router.navigate(['login']);
         }
         if (res.code == "1103") {
-          localStorage.clear();
-          this.openAlert('Không thể gửi email!');
-          this.router.navigate(['login']);
+          this.dialogService.openAlert('Không thể gửi mã xác thực tới ' + dataRegister.email);
+        }
+        if (res.code == "1100") {
+          this.dialogService.openAlert('Tên đăng nhập ' + dataRegister.username + ' đã được sử dụng!');
         }
       });;
-  }
-
-  openAlert(message): void {
-    this.dialogService.openAlert({
-      message: message,
-      disableClose: true || false, // defaults to false
-      // viewContainerRef: ViewContainerRef, //OPTIONAL
-      title: 'Thông báo!', //OPTIONAL, hides if not provided
-      closeButton: 'Đóng', //OPTIONAL, defaults to 'CLOSE'
-      width: '450px', //OPTIONAL, defaults to 400px
-    });
-  }
-
-  openPromptVerify(message): void {
-    this.dialogService.openPrompt({
-      message: message,
-      disableClose: true || false, // defaults to false
-      // viewContainerRef: this.viewContainerRef, //OPTIONAL
-      title: 'Xác nhận', //OPTIONAL, hides if not provided
-      value: '', //OPTIONAL
-      cancelButton: 'Huỷ', //OPTIONAL, defaults to 'CANCEL'
-      acceptButton: 'Nhập', //OPTIONAL, defaults to 'ACCEPT'
-      width: '500px', //OPTIONAL, defaults to 400px
-    }).afterClosed().subscribe((value: string) => {
-      if (value) {
-        let httpOptions = {
-          headers: new HttpHeaders({
-            'Authorization': 'Bearer' + localStorage.getItem('access_token'),
-          })
-        };
-
-        this.http.get(verifyApi + value.toString(), httpOptions).subscribe((res: commonRes) => {
-          if (res.code == '1000') {
-            this.openAlert('Đăng kí thành công!');
-            this.router.navigate(['']);
-          } else {
-            this.openAlert('Không thể xác thực!');
-          }
-        });
-      } else {
-        this.openAlert('Không thể xác thực!');
-      }
-    });
   }
 
 }
