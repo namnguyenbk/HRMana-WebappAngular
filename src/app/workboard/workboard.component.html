@@ -1,0 +1,38 @@
+
+<mat-toolbar *ngIf="projectData" class="header" color='primary'>
+    <mat-icon >work</mat-icon>{{projectData.projectName}}</mat-toolbar>
+<!-- <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport"> -->
+    <div cdkDropListGroup>
+        <div class="example-container">
+          <div class="example-box">
+              <h3>Danh sách công việc</h3>
+              <button mat-mini-fab color="primary" (click)="addTask()" matTooltip="Thêm">
+                <mat-icon>add</mat-icon>
+              </button>
+          </div>
+          <div
+            cdkDropList
+            [cdkDropListData]="todo"
+            class="example-list"
+            (cdkDropListDropped)="drop($event)">
+            <div class="example-box" *ngFor="let item of todo" cdkDrag>{{item}}</div>
+          </div>
+        </div>
+      
+        <div class="example-container">
+          <div class="example-box">
+              <h3>Hoàn thành</h3>
+              <!-- <button mat-mini-fab color="primary" (click)="addTask()" matTooltip="Thêm">
+                <mat-icon>add</mat-icon>
+              </button> -->
+          </div>
+          <div
+            cdkDropList
+            [cdkDropListData]="done"
+            class="example-list"
+            (cdkDropListDropped)="drop($event)">
+            <div class="example-box" *ngFor="let item of done" cdkDrag>{{item}}</div>
+          </div>
+        </div>
+      </div>
+<!-- </cdk-virtual-scroll-viewport> -->

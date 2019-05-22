@@ -1,0 +1,35 @@
+<mat-card class="example-card">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>Thông tin cá nhân</mat-card-title>
+    <mat-card-subtitle>namnguyen</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <!-- <mat-grid-list cols="4" rowHeight="100px">
+          <mat-grid-tile
+              *ngFor="let tile of tiles"
+              [colspan]="tile.cols"
+              [rowspan]="tile.rows"
+              [style.background]="tile.color">
+            {{tile.text}}
+          </mat-grid-tile>
+        </mat-grid-list> -->
+    <mat-grid-list cols="3" rowHeight="20px">
+      <mat-grid-tile>
+        <label class="mat-body">Tên đầy đủ: </label>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <p class="mat-body-strong">Nguyễn Danh Nam</p>
+      </mat-grid-tile> 
+      <mat-grid-tile>
+         <mat-icon>edit</mat-icon>
+        </mat-grid-tile> 
+       </mat-grid-list>
+  </mat-card-content>
+  <mat-divider></mat-divider>
+  <mat-card-actions>
+      <div fxFlex></div>
+      <button mat-button>OK</button>
+      <button mat-button>ACTION 2</button>
+    </mat-card-actions>
+</mat-card>

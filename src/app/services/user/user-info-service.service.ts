@@ -16,9 +16,19 @@ export class UserInfoServiceService {
   constructor( private http : HttpClient) { }
   
   getUserInfo(){
+  //     let api = "https://thongtindoanhnghiep.co/api/city";
+  //     const custom_http_option = {
+  //    headers: new HttpHeaders({
+  //      'Content-Type': 'application/x-www-form-urlencoded',
+  //      'Access-Control-Allow-Origin' : '*',
+  //      'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'
+  //  })};
+  //  this.http.get<any>(api, custom_http_option).subscribe( res =>{
+  //       alert(res)
+  //     });
     let httpOptions = {
       headers: new HttpHeaders({
-        // "Authorization" : "Bearer " + localStorage.getItem('acces-token'),
+        "Authorization" : "Bearer " + localStorage.getItem('access_token'),
         "Content-Type": "application/json"
       })
     };

@@ -1,6 +1,6 @@
-<td-layout >
-  <td-navigation-drawer  *ngIf="userInfo" flex sidenavTitle="Tài khoản" logo="menu" name="{{userInfo.lname}} {{userInfo.fname}}" 
-    email="{{userInfo.email}}" >
+<td-layout>
+  <td-navigation-drawer *ngIf="userInfo" flex sidenavTitle="Tài khoản" logo="menu"
+    name="{{userInfo.lname}} {{userInfo.fname}}" email="{{userInfo.email}}">
     <mat-nav-list>
       <a mat-list-item>
         <mat-icon>home</mat-icon>Trang chủ
@@ -9,8 +9,8 @@
         <mat-icon>account_box</mat-icon>Thông tin tài khoản
       </a>
       <a mat-list-item *ngIf="isAdmin">
-          <mat-icon>how_to_reg</mat-icon>Duyệt tài khoản
-        </a>
+        <mat-icon>how_to_reg</mat-icon>Duyệt tài khoản
+      </a>
       <a mat-list-item (click)="logout()">
         <mat-icon>exit_to_app</mat-icon>Đăng xuất
       </a>
@@ -18,13 +18,12 @@
     </mat-nav-list>
     <div td-navigation-drawer-menu>
       <mat-nav-list>
-       
       </mat-nav-list>
     </div>
   </td-navigation-drawer>
   <td-layout-nav-list #navList [opened]="media.registerQuery('gt-sm') | async" color="warn"
     [mode]="(media.registerQuery('gt-sm') | async) ? 'side' : 'over'"
-    [sidenavWidth]="(media.registerQuery('gt-xs') | async) ? '250px' : '100%'">
+    [sidenavWidth]="(media.registerQuery('gt-xs') | async) ? '500px' : '300px'">
     <div td-sidenav-toolbar-content layout="row" layout-align="start center">
       <button mat-icon-button tdLayoutToggle>
         <mat-icon>menu</mat-icon>
@@ -33,27 +32,51 @@
       <span [routerLink]="['/']" class="cursor-pointer">Quản lí công việc</span>
     </div>
     <div td-toolbar-content layout="row" layout-align="start center" flex>
-       <button mat-icon-button tdLayoutNavListOpen [hideWhenOpened]="true">
+      <button mat-icon-button tdLayoutNavListOpen [hideWhenOpened]="true">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <span flex></span>
-      <a routerLink="/invoices" md-button class="mat-button">Cá nhân</a>
-      <a routerLink="/customers" md-button class="mat-button">Nhóm</a>
+      <!-- <a routerLink="/invoices" md-button class="mat-button">Cá nhân</a> -->
+      <!-- <a routerLink="/customers" md-button class="mat-button">Nhóm</a> -->
     </div>
     <mat-nav-list td-sidenav-content [tdLayoutNavListClose]="!media.query('gt-sm')">
-      <a mat-list-item>
-        <mat-icon matListAvatar>work</mat-icon>
-        <h3 matLine>Đồ án 3</h3>
-        <p matLine>Spring, Angular</p>
+      <a mat-list-item  (click)='addProject()' color='warn'>
+        <mat-icon color='primary'>add</mat-icon>
+        <h3 matLine>Thêm dự án</h3>
+        <p matLine></p>
       </a>
-      <mat-divider [inset]="true"></mat-divider>
-      <a mat-list-item>
-        <mat-icon matListAvatar>work</mat-icon>
-        <h3 matLine> BTL IT4409 </h3>
-        <p matLine>Angular + ExpressJs</p>
+      <a mat-list-item >
+          <mat-icon color='primary' >list</mat-icon>
+          <h3 matLine>Danh sách dự án</h3>
+          <p matLine></p>
+        </a>
+      <a mat-list-item *ngFor="let project of projects" (click)='detailProject(project.projectId)'>
+        <mat-icon matListAvatar color='warn'>work</mat-icon>
+        <h3 matLine>{{project.projectName}}</h3>
+        <p matLine>{{project.description}}</p>
+        <br>
+        <button mat-icon-button color='primary' (click)='addMember(project.projectId)'>
+            <mat-icon color='primary' >person_add</mat-icon>
+        </button>
+        <button *ngIf="userInfo.username == project.ownerId"mat-icon-button color='primary' (click)='deleteProject(project.projectId)'>
+            <mat-icon color='warn' >delete</mat-icon>
+        </button>
+        <button *ngIf="userInfo.username != project.ownerId"mat-icon-button color='primary' (click)='leaveProject(project.projectId)'>
+            <mat-icon color='warn' >block</mat-icon>
+        </button>
+        <button mat-icon-button (click)='showListMember(project.projectId)'>
+            <mat-icon color='accent' >people</mat-icon>
+        </button>
       </a>
       <mat-divider [inset]="true"></mat-divider>
     </mat-nav-list>
+    <div tdMediaToggle="gt-xs" style="height:100%;">
+      <mat-card>
+        <router-outlet></router-outlet>
+        <!-- <app-user-detail></app-user-detail> -->
+        <!-- <app-workboard></app-workboard> -->
+      </mat-card>
+    </div>
   </td-layout-nav-list>
 
   <td-layout-footer>
@@ -62,3 +85,50 @@
     </div>
   </td-layout-footer>
 </td-layout>
+
+<!--  add projec -->
+<nz-modal [(nzVisible)]="isVisibleModalAddProject" [nzTitle]="modalTitleAddPro" [nzContent]="modalContentAddPro" [nzFooter]="modalFooterAddPro"
+  nzWidth="500" nzHeight="500" (nzOnCancel)="cancelModalAddPro()">
+  <ng-template #modalTitleAddPro>
+    Thêm dự án
+  </ng-template>
+  <ng-template #modalContentAddPro>
+      <input nz-input placeholder="Tên dự án" [(ngModel)]="projectName" />
+      <br />
+      <br />
+      <input nz-input placeholder="Mô tả" [(ngModel)]="descProject" />
+    <!-- <app-address-map *ngIf="isVisibleModalMap" [ownername]="ownername" [area]="area" [address]="address" [lat]="lat" [lng]="lng" [image]="images"> </app-address-map> -->
+  </ng-template>
+  <ng-template #modalFooterAddPro>
+      <button nz-button nzType="primary" (click)="saveProject()" >Thêm</button>
+    </ng-template>
+</nz-modal>
+
+
+<!-- add member -->
+<nz-modal [(nzVisible)]="isVisibleModalAddMem" [nzTitle]="modalTitleAddMem" [nzContent]="modalContentAddMem" [nzFooter]="modalFooterAddMem"
+nzWidth="500" nzHeight="500" (nzOnCancel)="cancelModalAddMem()">
+<ng-template #modalTitleAddMem>
+  Thêm thành viên
+</ng-template>
+<ng-template #modalContentAddMem>
+    <input nz-input placeholder="Mã thành viên" [(ngModel)]="memberId" />
+    <br />
+</ng-template>
+<ng-template #modalFooterAddMem>
+    <button nz-button nzType="primary" (click)="saveMem()" >Thêm</button>
+  </ng-template>
+</nz-modal>
+
+<!-- lisy member -->
+<nz-modal [(nzVisible)]="isVisibleModalListMem" [nzTitle]="modalTitleList" [nzContent]="modalContentList" [nzFooter]="modalFooterList"
+nzWidth="500" nzHeight="500" (nzOnCancel)="cancelModalList()">
+<ng-template #modalTitleAddMem>
+  Danh sách thành viên
+</ng-template>
+<ng-template #modalContentList>
+
+</ng-template>
+<ng-template #modalFooterList>
+  </ng-template>
+</nz-modal>
