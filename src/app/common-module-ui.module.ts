@@ -1,4 +1,5 @@
 import { NgModule } from "@angular/core";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -19,13 +20,15 @@ import {
 import {
     MatButtonModule, MatCardModule, MatDialogModule, MatInputModule, MatTableModule,
     MatToolbarModule, MatMenuModule, MatIconModule, MatProgressSpinnerModule, MatListModule,
-    MatSelectModule, MatSlideToggleModule, MatDatepickerModule, MatNativeDateModule,MatRadioModule
+    MatSelectModule, MatSlideToggleModule, MatDatepickerModule, MatNativeDateModule,MatRadioModule,
+    MatGridListModule
 
 } from '@angular/material';
 
 @NgModule({
     imports: [
         CommonModule,
+        DragDropModule,
         MatToolbarModule,
         MatButtonModule,
         MatCardModule,
@@ -42,6 +45,7 @@ import {
         MatDatepickerModule,
         MatNativeDateModule,
         MatRadioModule,
+        MatGridListModule,
         CovalentLayoutModule,
         CovalentStepsModule,
         CovalentHttpModule.forRoot(),
@@ -53,6 +57,7 @@ import {
     ],
     exports: [
         CommonModule,
+        DragDropModule,
         MatToolbarModule,
         MatButtonModule,
         MatCardModule,
@@ -69,6 +74,7 @@ import {
         MatDatepickerModule,
         MatNativeDateModule,
         MatRadioModule,
+        MatGridListModule,
         CovalentLayoutModule,
         CovalentStepsModule,
         CovalentDynamicFormsModule,
