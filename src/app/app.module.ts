@@ -13,8 +13,6 @@ import { UserInfoServiceService} from './services/user/user-info-service.service
 import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import {HeaderInterceptor} from './user/header-interceptor';
-import { ProjectComponent } from './project/project.component';
-import { TaskComponent } from './task/task.component';
 import {UserDetailComponent} from './user/user-detail/user-detail.component';
 import { WorkboardComponent } from './workboard/workboard.component';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
@@ -23,8 +21,6 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
     AppComponent,
     SidebarComponent,
     ManageListComponent,
-    ProjectComponent,
-    TaskComponent,
     UserDetailComponent,
     WorkboardComponent
   ],
