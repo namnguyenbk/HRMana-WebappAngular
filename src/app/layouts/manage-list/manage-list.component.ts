@@ -104,7 +104,7 @@ export class ManageListComponent implements OnInit {
 
   }
 
-  addProject( projectId : string){
+  addProject( ){
     this.isVisibleModalAddProject = true;
   }
 
