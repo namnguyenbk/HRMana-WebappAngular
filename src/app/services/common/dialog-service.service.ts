@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { TdDialogService } from '@covalent/core/dialogs';
+import { NzNotificationService } from 'ng-zorro-antd';
+
 @Injectable({
   providedIn: 'root'
 })
 export class DialogServiceService {
 
-  constructor( private dialogService : TdDialogService) { }
+  constructor( private dialogService : TdDialogService,
+    private notify : NzNotificationService) { }
 
   openAlert(message): void {
     this.dialogService.openAlert({
@@ -29,6 +32,14 @@ export class DialogServiceService {
       acceptButton: 'Đồng ý', //OPTIONAL, defaults to 'ACCEPT'
       width: '500px', //OPTIONAL, defaults to 400px
     });
+  }
+
+  showNotify(type : string, title : string, content : string ){
+    this.notify.create(
+      type,
+      title,
+      content
+    );
   }
 
 }

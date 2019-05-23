@@ -8,6 +8,7 @@ import {UserInfoServiceService} from '../../services/user/user-info-service.serv
 import { UserInfo } from '../../interface/user-interface';
 import { ProjectService } from 'src/app/services/project.service';
 import { Router } from '@angular/router';
+import { DialogServiceService } from 'src/app/services/common/dialog-service.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,7 +31,7 @@ export class ManageListComponent implements OnInit {
   projectName : string;
   descProject : string;
   // for list mem
-  listMember : Array<any>;
+  listMember : Array<any> = [];
   projectIdForListMem : string;
   isVisibleModalListMem : boolean = false;
   //for add member
@@ -42,7 +43,8 @@ export class ManageListComponent implements OnInit {
     private authService : AuthGuardService,
     private userInfoSerivce : UserInfoServiceService,
     private projecService : ProjectService,
-    private router : Router) {
+    private router : Router,
+    private notify : DialogServiceService) {
     }
 
     async ngOnInit(){
@@ -58,13 +60,23 @@ export class ManageListComponent implements OnInit {
 
        await this.projecService.getListProject().subscribe( (res : any) => {
         if(res.code == '1000'){
-          // this.projects = res.listProject;
           res.listProject.forEach(proMember => {
             this.projects.push(proMember.project);
           });
         }
       });
       
+    }
+
+    updateListProject(){
+      this.projects = [];
+      this.projecService.getListProject().subscribe( (res : any) => {
+        if(res.code == '1000'){
+          res.listProject.forEach(proMember => {
+            this.projects.push(proMember.project);
+          });
+        }
+      });
     }
   
   // isRoleAdmin() : boolean{
@@ -101,11 +113,29 @@ export class ManageListComponent implements OnInit {
   }
 
   saveProject(){
-    this.isVisibleModalAddProject = false;
+    if(this.projectName && this.descProject){
+      this.isVisibleModalAddProject = false;
+      let dataReq = {
+        "project_name" :this.projectName,
+        "type" : "PRIVATE",
+        "description" : this.descProject
+      }
+      this.projecService.addProject(dataReq).subscribe( (res : any) =>{
+        if(res.code == '1000'){
+          this.notify.showNotify('success', 'Thành công','Thêm dự án thành công!');
+          this.updateListProject();
+        }else{
+          this.notify.showNotify('error', 'Lỗi ','Có lỗi khi thêm!');
+        }
+      });
+    }else{
+      this.notify.showNotify('error','Lỗi','Nhập đủ thông tin');
+    }
 
   }
 
   addMember( projectId : string ){
+    this.projectIdForAddMem = projectId;
     this.isVisibleModalAddMem = true;
   }
 
@@ -114,10 +144,31 @@ export class ManageListComponent implements OnInit {
   }
 
   saveMem(){
-    this.cancelModalAddMem();
+    if( this.projectIdForAddMem && this.memberId){
+      this.cancelModalAddMem();
+      this.projecService.addMember(this.projectIdForAddMem, this.memberId).subscribe( (res : any) =>{
+        if( res.code == '1000'){
+          this.notify.showNotify('success', 'Thành công','Thêm thành viên thành công!');
+        }else{
+          if( res.code == '1111'){
+            this.notify.showNotify('error', 'Lỗi ','Không tìn thấy người dùng ' + this.memberId);
+          }
+
+          this.notify.showNotify('error', 'Lỗi ','Có lỗi khi thêm!');
+        }
+      });
+    }else{
+      this.notify.showNotify('error','Lỗi','Nhập đủ thông tin');
+    } 
+    
   }
 
-  showListMember(){
+  showListMember( projectId : string){
+    this.projecService.getDetailProject(projectId).subscribe( (res : any) => {
+      if(res.code == '1000'){
+        this.listMember = res.project.listMember.split(',');
+      }
+    })
     this.isVisibleModalListMem = true;
   }
 

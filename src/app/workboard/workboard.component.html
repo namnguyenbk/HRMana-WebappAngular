@@ -2,7 +2,7 @@
 <mat-toolbar *ngIf="projectData" class="header" color='primary'>
     <mat-icon >work</mat-icon>{{projectData.projectName}}</mat-toolbar>
 <!-- <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport"> -->
-    <div cdkDropListGroup>
+    <div cdkDropListGroup >
         <div class="example-container">
           <div class="example-box">
               <h3>Danh sách công việc</h3>
@@ -15,7 +15,16 @@
             [cdkDropListData]="todo"
             class="example-list"
             (cdkDropListDropped)="drop($event)">
-            <div class="example-box" *ngFor="let item of todo" cdkDrag>{{item}}</div>
+            <div
+          [cdkDragDisabled]="true"
+             class="example-box" *ngFor="let item of todoTask" cdkDrag>{{item.taskCode }} - {{item.taskName }} 
+             <button mat-icon-button color='primary' (click)='completeTask(item.taskId)'>
+              <mat-icon color='primary' >check</mat-icon>
+          </button>
+              <button mat-icon-button color='primary' (click)='deleteTask(item.taskId)'>
+                <mat-icon color='warn' >delete</mat-icon>
+            </button>
+            </div>
           </div>
         </div>
       
@@ -31,8 +40,38 @@
             [cdkDropListData]="done"
             class="example-list"
             (cdkDropListDropped)="drop($event)">
-            <div class="example-box" *ngFor="let item of done" cdkDrag>{{item}}</div>
+            <div
+            [cdkDragDisabled]="true"
+             class="example-box" *ngFor="let item of todoDone" cdkDrag>{{item.taskCode }} - {{item.taskName }}</div>
           </div>
         </div>
       </div>
 <!-- </cdk-virtual-scroll-viewport> -->
+
+<nz-modal [(nzVisible)]="isVisibleModalAddTask" [nzTitle]="modalTitleAddTask" [nzContent]="modalContentAddTask" [nzFooter]="modalFooterAddTask"
+  nzWidth="600" nzHeight="600" (nzOnCancel)="cancelModalAddPro()">
+  <ng-template #modalTitleAddTask>
+    Thêm công việc
+  </ng-template>
+  <ng-template #modalContentAddTask>
+      <input nz-input placeholder="Tên công việc" [(ngModel)]="taskName" />
+      <br />
+      <br />
+      <!-- <input nz-input placeholder="Người thực hiện" [(ngModel)]="assigned" /> -->
+      <nz-select style="width: 200px;" [(ngModel)]="assigned" nzAllowClear nzPlaceHolder="Người thực hiện">
+        <nz-option *ngFor="let member of listMember" nzValue="{{member}}" nzLabel="{{member}}">
+        </nz-option>
+      </nz-select>
+      <br />
+      <br />
+      <input nz-input placeholder="Thời hạn" [(ngModel)]="dueDate" />
+      <!-- <nz-date-picker [(ngModel)]="dueDate" ></nz-date-picker> -->
+      <br />
+      <br />
+      <input nz-input placeholder="Mô tả" [(ngModel)]="descTask" />
+    <!-- <app-address-map *ngIf="isVisibleModalMap" [ownername]="ownername" [area]="area" [address]="address" [lat]="lat" [lng]="lng" [image]="images"> </app-address-map> -->
+  </ng-template>
+  <ng-template #modalFooterAddTask>
+      <button nz-button nzType="primary" (click)="saveTask()" >Thêm</button>
+    </ng-template>
+</nz-modal>
