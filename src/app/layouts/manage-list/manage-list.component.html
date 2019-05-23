@@ -123,11 +123,14 @@ nzWidth="500" nzHeight="500" (nzOnCancel)="cancelModalAddMem()">
 <!-- lisy member -->
 <nz-modal [(nzVisible)]="isVisibleModalListMem" [nzTitle]="modalTitleList" [nzContent]="modalContentList" [nzFooter]="modalFooterList"
 nzWidth="500" nzHeight="500" (nzOnCancel)="cancelModalList()">
-<ng-template #modalTitleAddMem>
+<ng-template #modalTitleList>
   Danh sách thành viên
 </ng-template>
 <ng-template #modalContentList>
-
+  <h3 *ngFor="let member of listMember">
+    <mat-icon>person</mat-icon>
+    {{member}}</h3>
+  <mat-divider></mat-divider>
 </ng-template>
 <ng-template #modalFooterList>
   </ng-template>

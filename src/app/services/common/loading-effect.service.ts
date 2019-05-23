@@ -13,7 +13,7 @@ export class LoadingEffectService {
     this.loadingService.create({
       name: 'loading',
       mode: LoadingMode.Indeterminate,
-      type: LoadingType.Circular,
+      type: LoadingType.Linear,
       color: 'warn',
     });
    }
