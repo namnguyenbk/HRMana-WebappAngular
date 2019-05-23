@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  server : 'http://localhost:9090/'
+  server : 'https://tdmnserver.herokuapp.com/'
 };
